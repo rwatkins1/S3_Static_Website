@@ -42,20 +42,26 @@
             <p>Feel free to reach out to me via <a href="mailto:rennard@example.com">email</a>.</p>
         </section>
     </main>
+    <p>This page has been visited <span id="counter">0</span> times.</p>
     <footer>
         <p>&copy; 2024 Rennard</p>
     </footer>
     <script>
-        <button onclick="clicked()">Press Me!</button>
-function clicked() {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://api.countapi.xyz/hit/http://watkinsbucket111.s3-website-us-east-1.amazonaws.com/awesomeclick");
-    xhr.responseType = "json";
-    xhr.onload = function() {
-        alert(`This button has been clicked ${this.response.value} times!`);
-    }
-    xhr.send();
-}
-      </script>
+// Define the namespace and key for the counter
+        const namespace = 'http://watkinsbucket111.s3-website-us-east-1.amazonaws.com/';
+        const key = 'homepage';
+
+ // Construct the API URL
+        const url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
+
+// Fetch the current counter value
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+// Update the counter in the HTML
+        document.getElementById('counter').innerText = data.value;
+      })
+      .catch(error => console.error('Error fetching counter:', error));
+    </script>
 </body>
 </html>
