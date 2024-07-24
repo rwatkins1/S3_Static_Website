@@ -3,21 +3,30 @@ name: Upload Website
 on:
   push:
     branches:
-    - main
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v1
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Deploy static site to S3 bucket
-      run: aws s3 sync ./public/ s3://watkinsbucket111 --delete
+      - name: Verify AWS Configuration
+        run: aws sts get-caller-identity
+
+      - name: List S3 Bucket Contents (Debugging)
+        run: aws s3 ls s3://watkinsbucket111 --recursive
+
+      - name: Sync files to S3 bucket
+        run: |
+          # Synchronize the current directory to the S3 bucket
+          aws s3 sync . s3://watkinsbucket111 --delete --exclude ".git/*" --exclude ".github/*" --exclude "README.md" --exclude "*.tf"
